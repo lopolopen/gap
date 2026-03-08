@@ -14,6 +14,7 @@ import (
 	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/storage/gorm"
 	"github.com/lopolopen/gap/internal/tx"
+	"github.com/lopolopen/gap/internal/workerid"
 	"github.com/lopolopen/shoot"
 )
 
@@ -151,7 +152,7 @@ func (g *groupedSubs) listeningAll() error {
 func initSnowflake(node int64) {
 	if node < 0 {
 		var err error
-		node, err = genWorkerIDOnMAC()
+		node, err = workerid.GenOnMAC()
 		if err != nil {
 			slog.Warn("failed to generate worker id on MAC, falling back to random number")
 			r := rand.New(rand.NewSource(time.Now().UnixNano()))

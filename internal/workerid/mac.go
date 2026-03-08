@@ -1,4 +1,4 @@
-package gap
+package workerid
 
 import (
 	"errors"
@@ -6,11 +6,11 @@ import (
 	"sort"
 )
 
-// genWorkerIDOnMAC generates a worker ID based on the MAC address,
+// GenOnMAC generates a worker ID based on the MAC address,
 // following the same logic used in CAP's SnowflakeId implementation.
 // It selects the first valid network interface and derives a 10‑bit worker ID
 // from the last two bytes of its MAC address.
-func genWorkerIDOnMAC() (int64, error) {
+func GenOnMAC() (int64, error) {
 	interfaces, err := net.Interfaces()
 	if err != nil {
 		return 0, err
