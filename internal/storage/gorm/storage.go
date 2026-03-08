@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"time"
 
 	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/entity"
@@ -36,37 +35,13 @@ func (s *Storage) CreatePublished(ctx context.Context, envelop *entity.Envelope)
 	if envelop == nil {
 		return errx.ErrParamIsNil("envelop")
 	}
-	if envelop.Topic == "" {
-		return errx.ErrEmptyTopic
-	}
-	payload, err := envelop.PayloadBytes()
-	if err != nil {
-		return err
-	}
-	if len(payload) == 0 {
-		return errx.ErrNilPayload
-	}
 
-	headers, err := envelop.HeadersBytes()
-	if err != nil {
-		return err
-	}
-
-	pub := &Published{
-		Model: Model{
-			ID:        envelop.ID,
-			CreatedAt: time.Now(),
-			Version:   s.gapOpts.Version,
-			Topic:     envelop.Topic,
-			Status:    enum.StatusPending,
-			Payload:   string(payload),
-			Headers:   string(headers),
-		},
-	}
 	if _, ok := s.db.Statement.ConnPool.(gorm.TxCommitter); !ok {
 		slog.Warn("publishing does not work in transaction")
 	}
-	err = s.db.Create(pub).Error
+
+	pub := new(Published).FromEntity(envelop)
+	err := s.db.Create(pub).Error
 	if err != nil {
 		return err
 	}
@@ -78,34 +53,9 @@ func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) 
 	if envelop == nil {
 		return errx.ErrParamIsNil("envelop")
 	}
-	if envelop.Topic == "" {
-		return errx.ErrEmptyTopic
-	}
-	headers, err := envelop.HeadersBytes()
-	if err != nil {
-		return err
-	}
-	payload, err := envelop.PayloadBytes()
-	if err != nil {
-		return err
-	}
-	if len(payload) == 0 {
-		return errx.ErrNilPayload
-	}
 
-	rec := &Received{
-		Model: Model{
-			ID:        envelop.ID,
-			CreatedAt: time.Now(),
-			Version:   envelop.Version,
-			Topic:     envelop.Topic,
-			Status:    enum.StatusPending,
-			Headers:   string(headers),
-			Payload:   string(payload),
-		},
-		Group: envelop.Group,
-	}
-	err = s.db.Create(rec).Error
+	rec := new(Received).FromEntity(envelop)
+	err := s.db.Create(rec).Error
 	if err != nil {
 		return err
 	}

@@ -61,6 +61,9 @@ func (p *Pub[T]) Publish(ctx context.Context, topic string, msg T, headers map[s
 	for k, v := range headers {
 		e.AddHeader(k, v)
 	}
+	if err := e.Verify(); err != nil {
+		return err
+	}
 	if p.storage != nil {
 		return p.storage.CreatePublished(ctx, e)
 	}

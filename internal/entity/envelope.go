@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/bwmarrin/snowflake"
+	"github.com/lopolopen/gap/internal/errx"
 )
 
 var sfNode *snowflake.Node
@@ -92,4 +93,11 @@ func (e *Envelope) HeadersBytes() ([]byte, error) {
 
 func (e *Envelope) IDString() string {
 	return strconv.FormatInt(int64(e.ID), 10)
+}
+
+func (e *Envelope) Verify() error {
+	if e.Topic == "" {
+		return errx.ErrEmptyTopic
+	}
+	return nil
 }

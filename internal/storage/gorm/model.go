@@ -21,7 +21,7 @@ type Model struct {
 	ExpiredAt sql.Null[time.Time]
 }
 
-//go:generate go tool shoot map -way=-> -path=../../entity -to=Envelope,Envelope -type=Published,Received
+//go:generate go tool shoot map -path=../../entity -to=Envelope,Envelope -type=Published,Received
 
 type Published struct {
 	Model
@@ -41,6 +41,19 @@ func (p *Published) writeEntity(e *entity.Envelope) {
 	e.Tag = nil
 }
 
+func (p *Published) readEntity(e *entity.Envelope) {
+	if p.CreatedAt.IsZero() {
+		p.CreatedAt = time.Now()
+	}
+	payload, _ := e.PayloadBytes()
+	p.Payload = string(payload)
+	if p.Status == 0 {
+		p.Status = enum.StatusPending
+	}
+	headers, _ := e.HeadersBytes()
+	p.Headers = string(headers)
+}
+
 type Received struct {
 	Model
 	Group string `gorm:"not null;size:128"`
@@ -57,4 +70,17 @@ func (r *Received) writeEntity(e *entity.Envelope) {
 	}
 	e.Message = nil
 	e.Tag = nil
+}
+
+func (r *Received) readEntity(e *entity.Envelope) {
+	if r.CreatedAt.IsZero() {
+		r.CreatedAt = time.Now()
+	}
+	payload, _ := e.PayloadBytes()
+	r.Payload = string(payload)
+	if r.Status == 0 {
+		r.Status = enum.StatusPending
+	}
+	headers, _ := e.HeadersBytes()
+	r.Headers = string(headers)
 }
