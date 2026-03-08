@@ -129,7 +129,7 @@ func must[T any](v T, err error) T {
 
 // @subscribe: topic="topic.test"
 func handle(db *gorm.DB) gap.Handler[time.Time] {
-    return func(ctx context.Context, msg time.Time, headers map[string]any) error {
+    return func(ctx context.Context, msg time.Time, headers map[string]string) error {
         slog.Info(fmt.Sprintf("Received message: %s", msg))
         return nil
     }

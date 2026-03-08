@@ -37,19 +37,24 @@ func (b *Broker) Send(ctx context.Context, envelope *entity.Envelope) error {
 	return b.send(ctx, routingKey, envelope.Headers, envelope.Payload)
 }
 
-func (b *Broker) send(ctx context.Context, routingKey string, headers map[string]any, body []byte) error {
+func (b *Broker) send(ctx context.Context, routingKey string, headers map[string]string, body []byte) error {
 	ch, err := b.chPool.Rent()
 	if err != nil {
 		return err
 	}
 	defer ch.Close()
 
+	tbl := make(map[string]any)
+	for k, v := range headers {
+		tbl[k] = v
+	}
+
 	// Exchange may not be bound to any queues.
 	// In this case:
 	// The message will be discarded by the broker.
 	// The message in the database will be marked as successfully sent if persistence is enabled.
 	err = ch.PublishWithContext(ctx, b.exchange(), routingKey, false, false, amqp.Publishing{
-		Headers:      headers,
+		Headers:      tbl,
 		MessageId:    "",
 		DeliveryMode: amqp.Persistent,
 		Body:         body,
@@ -116,14 +121,13 @@ func (b *Broker) Receive(ctx context.Context) (<-chan *entity.Envelope, error) {
 						slog.Warn("delivery channel closed, retrying with new channel")
 						goto RETRY
 					}
-
 					en := entity.NewEnvelope(b.gapOpts.Version, deli.RoutingKey, nil).
 						WithPayload(deli.Body).
 						WithGroup(b.gapOpts.Group).
 						WithTag(deli)
 
 					for k, v := range deli.Headers {
-						en.AddHeader(k, v)
+						en.AddHeader(k, fmt.Sprintf("%v", v))
 					}
 
 					enCh <- en

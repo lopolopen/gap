@@ -5,6 +5,7 @@ go 1.24.6
 tool github.com/lopolopen/shoot/cmd/shoot
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/lopolopen/shoot v0.7.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	golang.org/x/sync v0.19.0

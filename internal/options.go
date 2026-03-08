@@ -41,6 +41,9 @@ type Options struct {
 	//shoot: def=1
 	MaxPublishConcurrency int32
 
+	//shoot: def=-1
+	WorkerID int64
+
 	// EnableInbox bool
 
 	_rabitmq             *rabbitmq.Options

@@ -9,7 +9,7 @@ import (
 )
 
 // NewOptions constructs a new instance of type Options
-func NewOptions(context context.Context, serviceName string, version string, defaultGroup string, group string, claimBatchSize int, maxRetries int, lookbackSeconds int, pumpingIntervalSeconds int, maxPublishConcurrency int32) *Options {
+func NewOptions(context context.Context, serviceName string, version string, defaultGroup string, group string, claimBatchSize int, maxRetries int, lookbackSeconds int, pumpingIntervalSeconds int, maxPublishConcurrency int32, workerId int64) *Options {
 	return &Options{
 		Context:                context,
 		ServiceName:            serviceName,
@@ -21,6 +21,7 @@ func NewOptions(context context.Context, serviceName string, version string, def
 		LookbackSeconds:        lookbackSeconds,
 		PumpingIntervalSeconds: pumpingIntervalSeconds,
 		MaxPublishConcurrency:  maxPublishConcurrency,
+		WorkerID:               workerId,
 	}
 }
 
@@ -103,6 +104,13 @@ func MaxPublishConcurrency(maxPublishConcurrency_ int32) shoot.Option[Options, *
 	}
 }
 
+// WorkerID is a configuration for the filed WorkerID
+func WorkerID(workerID_ int64) shoot.Option[Options, *Options] {
+	return func(o *Options) {
+		o.WorkerID = workerID_
+	}
+}
+
 // SetDefault sets the default values
 func (o *Options) SetDefault() {
 	o.Context = context.Background()
@@ -113,6 +121,7 @@ func (o *Options) SetDefault() {
 	o.LookbackSeconds = 180
 	o.PumpingIntervalSeconds = 1
 	o.MaxPublishConcurrency = 1
+	o.WorkerID = -1
 }
 
 // ShootNew exists solely to fulfill the NewShooter interface contract

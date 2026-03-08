@@ -54,6 +54,7 @@ func (s *Storage) CreatePublished(ctx context.Context, envelop *entity.Envelope)
 
 	pub := &Published{
 		Model: Model{
+			ID:        envelop.ID,
 			CreatedAt: time.Now(),
 			Version:   s.gapOpts.Version,
 			Topic:     envelop.Topic,
@@ -80,6 +81,10 @@ func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) 
 	if envelop.Topic == "" {
 		return errx.ErrEmptyTopic
 	}
+	headers, err := envelop.HeadersBytes()
+	if err != nil {
+		return err
+	}
 	payload, err := envelop.PayloadBytes()
 	if err != nil {
 		return err
@@ -90,10 +95,12 @@ func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) 
 
 	rec := &Received{
 		Model: Model{
+			ID:        envelop.ID,
 			CreatedAt: time.Now(),
 			Version:   envelop.Version,
 			Topic:     envelop.Topic,
 			Status:    enum.StatusPending,
+			Headers:   string(headers),
 			Payload:   string(payload),
 		},
 		Group: envelop.Group,

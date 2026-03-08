@@ -12,7 +12,7 @@ import (
 	"github.com/lopolopen/gap/internal/storage"
 )
 
-type Handler[T any] func(ctx context.Context, msg T, headers map[string]any) error
+type Handler[T any] func(ctx context.Context, msg T, headers map[string]string) error
 
 type Sub struct {
 	opts     *Options
@@ -55,6 +55,8 @@ func NewSub(opts *Options, storage storage.Storage, broker broker.Broker) *Sub {
 	}
 	if storage != nil {
 		sub.pump = NewPump(opts, storage, broker)
+	} else {
+		slog.Debug("working on no-persistence mode")
 	}
 	return sub
 }

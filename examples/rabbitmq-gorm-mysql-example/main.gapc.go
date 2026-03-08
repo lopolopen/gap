@@ -22,7 +22,7 @@ func init() {
 			gapc.ResolveType("*gorm.DB", func(v *gorm.DB) { db_ = v }),
 		),
 		gapc.HandleTopicWithinGroupRaw(
-			func(ctx context.Context, data_ []byte, headers_ map[string]any) error {
+			func(ctx context.Context, data_ []byte, headers_ map[string]string) error {
 				var msg_ time.Time
 				err := json.Unmarshal(data_, &msg_)
 				if err != nil {
@@ -45,7 +45,7 @@ func init() {
 	gap.Subscribe(
 		gapc.GoGenerated(),
 		gapc.HandleTopicWithinGroupRaw(
-			func(ctx context.Context, data_ []byte, headers_ map[string]any) error {
+			func(ctx context.Context, data_ []byte, headers_ map[string]string) error {
 				var msg_ *event.OrderCreated
 				err := json.Unmarshal(data_, &msg_)
 				if err != nil {

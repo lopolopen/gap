@@ -40,10 +40,10 @@ func NewPump(gapOpts *Options, storage storage.Storage, broker broker.Broker) *P
 
 func (p *Pump) PollingSend() {
 	ctx := p.gapOpts.Context
-	go p.send(ctx)
+	go p.pollingSend(ctx)
 }
 
-func (p *Pump) send(ctx context.Context) {
+func (p *Pump) pollingSend(ctx context.Context) {
 	ticker := time.NewTicker(p.gapOpts.PumpingInterval())
 	defer ticker.Stop()
 
@@ -148,11 +148,11 @@ func (p *Pump) PollingHandle(enCh <-chan *entity.Envelope) <-chan *entity.Envelo
 	}()
 
 	outCh := make(chan *entity.Envelope)
-	go p.handle(ctx, outCh)
+	go p.pollingHandle(ctx, outCh)
 	return outCh
 }
 
-func (p *Pump) handle(ctx context.Context, outCh chan *entity.Envelope) {
+func (p *Pump) pollingHandle(ctx context.Context, outCh chan *entity.Envelope) {
 	ticker := time.NewTicker(p.gapOpts.PumpingInterval())
 	defer ticker.Stop()
 	defer close(outCh)

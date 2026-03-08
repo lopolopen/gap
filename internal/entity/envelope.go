@@ -1,10 +1,32 @@
 package entity
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"log/slog"
+	"strconv"
+	"sync"
+
+	"github.com/bwmarrin/snowflake"
+)
+
+var snowNode *snowflake.Node
+var initOnce sync.Once
+
+func MustInitSnowflake(node int64) {
+	initOnce.Do(func() {
+		slog.Debug(fmt.Sprintf("snowflake picks node %d", node))
+		var err error
+		snowNode, err = snowflake.NewNode(node)
+		if err != nil {
+			panic(err)
+		}
+	})
+}
 
 type Envelope struct {
 	ID      uint
-	Headers map[string]any
+	Headers map[string]string
 	Version string
 	Topic   string
 	Group   string
@@ -15,7 +37,9 @@ type Envelope struct {
 }
 
 func NewEnvelope(version string, topic string, msg any) *Envelope {
+	id := snowNode.Generate().Int64()
 	return &Envelope{
+		ID:      uint(id),
 		Version: version,
 		Topic:   topic,
 		Message: msg,
@@ -37,9 +61,9 @@ func (e *Envelope) WithTag(tag any) *Envelope {
 	return e
 }
 
-func (e *Envelope) AddHeader(key string, value any) {
+func (e *Envelope) AddHeader(key string, value string) {
 	if e.Headers == nil {
-		e.Headers = make(map[string]any)
+		e.Headers = make(map[string]string)
 	}
 	e.Headers[key] = value
 }
@@ -64,4 +88,8 @@ func (e *Envelope) HeadersBytes() ([]byte, error) {
 		return nil, nil
 	}
 	return json.Marshal(e.Headers)
+}
+
+func (e *Envelope) IDString() string {
+	return strconv.FormatInt(int64(e.ID), 10)
 }

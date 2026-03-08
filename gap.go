@@ -1,9 +1,15 @@
 package gap
 
 import (
+	"log/slog"
+	"math/rand"
+	"time"
+
+	"github.com/bwmarrin/snowflake"
 	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/broker/rabbitmq"
+	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
 	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/storage/gorm"
@@ -27,6 +33,8 @@ type Options = internal.Options
 
 func NewPublisher[T any](opts ...shoot.Option[Options, *Options]) Publisher[T] {
 	gapOpts := new(Options).With(opts...)
+
+	initSnowflake(gapOpts.WorkerID)
 
 	var stor storage.Storage
 	var brok broker.Broker
@@ -66,6 +74,8 @@ func Subscribe(opts ...shoot.Option[Options, *Options]) {
 	if internal.RegisterHandlerOnly(gapOpts) {
 		return
 	}
+
+	initSnowflake(gapOpts.WorkerID)
 
 	for _, dep := range grouped.dependencyOtps {
 		dep.Resolve(gapOpts.Values())
@@ -136,4 +146,17 @@ func (g *groupedSubs) listeningAll() error {
 		}
 	}
 	return nil
+}
+
+func initSnowflake(node int64) {
+	if node < 0 {
+		var err error
+		node, err = genWorkerIDOnMAC()
+		if err != nil {
+			slog.Warn("failed to generate worker id on MAC, falling back to random number")
+			r := rand.New(rand.NewSource(time.Now().UnixNano()))
+			node = int64(r.Intn(1 << snowflake.NodeBits))
+		}
+	}
+	entity.MustInitSnowflake(node)
 }

@@ -30,7 +30,7 @@ func init() { {{"\n"}}
 			{{- $topic = .TopicExpr -}}
 		{{- end -}}
 		gapc.HandleTopicWithinGroupRaw(
-			func(ctx context.Context, data_ []byte, headers_ map[string]any) error {
+			func(ctx context.Context, data_ []byte, headers_ map[string]string) error {
 				var msg_ {{.MsgType}}
 				err := json.Unmarshal(data_, &msg_)
 				if err != nil {

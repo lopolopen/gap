@@ -29,7 +29,7 @@ type Published struct {
 
 func (p *Published) writeEntity(e *entity.Envelope) {
 	if p.Headers != "" {
-		var headers map[string]interface{}
+		var headers map[string]string
 		err := json.Unmarshal([]byte(p.Headers), &headers)
 		if err != nil {
 			panic(err)
@@ -48,7 +48,7 @@ type Received struct {
 
 func (r *Received) writeEntity(e *entity.Envelope) {
 	if r.Headers != "" {
-		var headers map[string]interface{}
+		var headers map[string]string
 		err := json.Unmarshal([]byte(r.Headers), &headers)
 		if err != nil {
 			panic(err)

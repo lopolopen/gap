@@ -123,7 +123,7 @@ func must[T any](v T, err error) T {
 
 // @subscribe: topic="topic.test"
 func handle(db *gorm.DB) gap.Handler[time.Time] {
-	return func(ctx context.Context, msg time.Time, headers map[string]any) error {
+	return func(ctx context.Context, msg time.Time, headers map[string]string) error {
 		if db != nil {
 			slog.Info(fmt.Sprintf("dependency: %T", db))
 		}
@@ -134,7 +134,7 @@ func handle(db *gorm.DB) gap.Handler[time.Time] {
 
 // @subscribe: group="group.test"
 func handle2() gap.Handler[*event.OrderCreated] {
-	return func(ctx context.Context, msg *event.OrderCreated, headers map[string]any) error {
+	return func(ctx context.Context, msg *event.OrderCreated, headers map[string]string) error {
 		slog.Info(fmt.Sprintf("received event: %s, %s", msg.Topic(), msg.SN))
 		return nil
 	}

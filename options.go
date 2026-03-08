@@ -14,6 +14,7 @@ var (
 	Version      = internal.Version
 	ServiceName  = internal.ServiceName
 	DefaultGroup = internal.DefaultGroup
+	WorkerID     = internal.WorkerID
 
 	Inject = internal.Inject
 )

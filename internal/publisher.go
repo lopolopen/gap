@@ -9,11 +9,11 @@ import (
 type Publisher[T any] interface {
 	Bind(txer tx.Txer) (Publisher[T], error)
 
-	Publish(ctx context.Context, topic string, msg T, headers map[string]any) error
+	Publish(ctx context.Context, topic string, msg T, headers map[string]string) error
 }
 
 type EventPublisher interface {
 	Bind(txer tx.Txer) (EventPublisher, error)
 
-	Publish(ctx context.Context, event Event, headers map[string]any) error
+	Publish(ctx context.Context, event Event, headers map[string]string) error
 }

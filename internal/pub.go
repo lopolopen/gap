@@ -7,6 +7,7 @@ import (
 	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
+	"github.com/lopolopen/gap/internal/header"
 	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/tx"
 )
@@ -52,8 +53,14 @@ func (p *Pub[T]) bind(txer tx.Txer) (*Pub[T], error) {
 }
 
 // Publish implements [Pub].
-func (p *Pub[T]) Publish(ctx context.Context, topic string, msg T, headers map[string]any) error {
+func (p *Pub[T]) Publish(ctx context.Context, topic string, msg T, headers map[string]string) error {
 	e := entity.NewEnvelope(p.opts.Version, topic, msg)
+	idstr := e.IDString()
+	headers = header.With(headers, header.MessageID, idstr)
+	headers = header.With(headers, header.CorrelationID, idstr)
+	for k, v := range headers {
+		e.AddHeader(k, v)
+	}
 	if p.storage != nil {
 		return p.storage.CreatePublished(ctx, e)
 	}
@@ -77,6 +84,6 @@ func (e *EventPub) Bind(txer tx.Txer) (EventPublisher, error) {
 	return &EventPub{Pub: p}, nil
 }
 
-func (p *EventPub) Publish(ctx context.Context, event Event, headers map[string]any) error {
+func (p *EventPub) Publish(ctx context.Context, event Event, headers map[string]string) error {
 	return p.Pub.Publish(ctx, event.Topic(), event, headers)
 }

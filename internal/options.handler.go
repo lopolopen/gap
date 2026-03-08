@@ -25,7 +25,7 @@ func HandleTopicWithinGroup[T any](handler Handler[T], topic string, group strin
 	if handler == nil {
 		panic(errx.ErrParamIsNil("handler"))
 	}
-	h := func(ctx context.Context, msg []byte, headers map[string]any) error {
+	h := func(ctx context.Context, msg []byte, headers map[string]string) error {
 		var t T
 		err := json.Unmarshal(msg, &t)
 		if err != nil {
