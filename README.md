@@ -73,7 +73,7 @@ func main() {
     db := must(gorm.Open(mysql.Open(dsn)))
 
     // Create publisher
-    pub := gap.NewPublisher[time.Time](
+    pub := gap.NewEventPublisher(
         gap.WithContext(ctx),
         gap.UseRabbitMQ(
             rabbitmq.URL(url),
@@ -95,7 +95,7 @@ func main() {
                 DSN: dsn,
             }),
         ),
-        gap.Inject(db),
+        gap.Inject(/*handler_dependencies*/),
     )
 
     // Publish messages in a transaction
@@ -109,7 +109,7 @@ func main() {
                 // Your business logic here...
 
                 // Publish message (outbox pattern ensures reliability)
-                return pub.Publish(ctx, "topic.test", time.Now(), nil)
+                return pub.Publish(ctx, event.NewOrderCreated(), nil)
             })
         }
     }()
@@ -127,10 +127,10 @@ func must[T any](v T, err error) T {
 
 //go:generate go run github.com/lopolopen/gap/cmd/gapc -file=$GOFILE
 
-// @subscribe: topic="topic.test"
-func handle(db *gorm.DB) gap.Handler[time.Time] {
-    return func(ctx context.Context, msg time.Time, headers map[string]string) error {
-        slog.Info(fmt.Sprintf("Received message: %s", msg))
+// @subscribe
+func handle(/*dependency-list*/) gap.Handler[*event.OrderCreated] {
+    return func(ctx context.Context, msg *event.OrderCreated, headers map[string]string) error {
+        slog.Info(fmt.Sprintf("received event: %s, %s", msg.Topic(), msg.SN))
         return nil
     }
 }
@@ -200,7 +200,16 @@ Add annotations to your handler functions:
 
 ```go
 // @subscribe: topic="my.topic"
-func myHandler() gap.Handler[MyMessage] {
+func myHandler(/*dependency-list*/) gap.Handler[MyMessage] {
+    // handler implementation
+}
+```
+
+Or use receiver as a dependency:
+
+```go
+// @subscribe: topic="my.topic"
+func (svc *MySvc) myHandler(/*other-dependencies*/) gap.Handler[MyMessage] {
     // handler implementation
 }
 ```
