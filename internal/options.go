@@ -6,6 +6,7 @@ import (
 
 	"github.com/lopolopen/gap/options/gorm"
 	"github.com/lopolopen/gap/options/kafka"
+	"github.com/lopolopen/gap/options/mysql"
 	"github.com/lopolopen/gap/options/rabbitmq"
 	"github.com/lopolopen/shoot"
 )
@@ -49,6 +50,7 @@ type Options struct {
 	_rabitmq             *rabbitmq.Options
 	_kafa                *kafka.Options
 	_gorm                *gorm.Options
+	_mysql               *mysql.Options
 	_handlers            []HandlerOptions
 	_dependencies        []DIOptions
 	_values              []any
@@ -81,6 +83,10 @@ func (o *Options) Gorm() *gorm.Options {
 	return o._gorm
 }
 
+func (o *Options) MySQL() *mysql.Options {
+	return o._mysql
+}
+
 func (o *Options) Handlers() []HandlerOptions {
 	return o._handlers
 }
@@ -104,6 +110,13 @@ func UseGorm(opts ...shoot.Option[gorm.Options, *gorm.Options]) shoot.Option[Opt
 	return func(o *Options) {
 		options := new(gorm.Options).With(opts...)
 		o._gorm = options
+	}
+}
+
+func UseMySQL(opts ...shoot.Option[mysql.Options, *mysql.Options]) shoot.Option[Options, *Options] {
+	return func(o *Options) {
+		options := new(mysql.Options).With(opts...)
+		o._mysql = options
 	}
 }
 

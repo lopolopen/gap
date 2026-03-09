@@ -13,10 +13,20 @@ import (
 	"github.com/lopolopen/gap/internal/errx"
 	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/storage/gorm"
+	"github.com/lopolopen/gap/internal/storage/mysql"
 	"github.com/lopolopen/gap/internal/tx"
 	"github.com/lopolopen/gap/internal/workerid"
 	"github.com/lopolopen/shoot"
 )
+
+const (
+	KeysMessageID     = internal.KeysMessageID
+	KeysMessageType   = internal.KeysMessageType
+	KeysGroup         = internal.KeysGroup
+	KeysCorrelationID = internal.KeysCorrelationID
+)
+
+var Pair = internal.Pair
 
 type Tx = tx.Tx
 
@@ -40,7 +50,10 @@ func NewPublisher[T any](opts ...shoot.Option[Options, *Options]) Publisher[T] {
 	var stor storage.Storage
 	var brok broker.Broker
 	if gapOpts.Gorm() != nil {
-		stor = gorm.NewStorate(gapOpts)
+		stor = gorm.NewStorage(gapOpts)
+	}
+	if gapOpts.MySQL() != nil {
+		stor = mysql.NewStorage(gapOpts)
 	}
 	if gapOpts.RabbitMQ() != nil {
 		brok = rabbitmq.NewBroker(gapOpts)
@@ -122,7 +135,10 @@ func (g *groupedSubs) subscribe(gapOpts *Options) error {
 			var stor storage.Storage
 			var brok broker.Broker
 			if opt.Gorm() != nil {
-				stor = gorm.NewStorate(&opt)
+				stor = gorm.NewStorage(&opt)
+			}
+			if opt.MySQL() != nil {
+				stor = mysql.NewStorage(&opt)
 			}
 			if opt.RabbitMQ() != nil {
 				brok = rabbitmq.NewBroker(&opt)

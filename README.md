@@ -109,7 +109,7 @@ func main() {
                 // Your business logic here...
 
                 // Publish message (outbox pattern ensures reliability)
-                return pub.Publish(ctx, event.NewOrderCreated(), nil)
+                return pub.Publish(ctx, event.NewOrderCreated())
             })
         }
     }()

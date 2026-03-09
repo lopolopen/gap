@@ -1,6 +1,6 @@
 package enum
 
-//go:generate go tool shoot enum -sql -type=Status
+//go:generate go tool shoot enum -sql -gorm -type=Status
 
 type Status int32
 

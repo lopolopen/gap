@@ -23,5 +23,6 @@ var (
 	ErrNilPayload    = errors.New("payload is nil")
 	ErrEmptyTopic    = errors.New("topic is empty")
 	ErrInvalidGormTx = errors.New("tx is not a gorm transaction")
+	ErrInvalidSQLTx  = errors.New("tx is not a sql transaction")
 	ErrNilHandler    = errors.New("handler is nil")
 )

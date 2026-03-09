@@ -10,6 +10,7 @@ var (
 
 	UseRabbitMQ = internal.UseRabbitMQ
 	UseGorm     = internal.UseGorm
+	UseMySQL    = internal.UseMySQL
 
 	Version      = internal.Version
 	ServiceName  = internal.ServiceName
