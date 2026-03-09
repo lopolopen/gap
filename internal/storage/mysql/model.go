@@ -1,4 +1,4 @@
-package gorm
+package mysql
 
 import (
 	"database/sql"
@@ -9,22 +9,18 @@ import (
 	"github.com/lopolopen/gap/internal/enum"
 )
 
-type Model struct {
-	ID        uint        `gorm:"primarykey"`
-	CreatedAt time.Time   `gorm:"not null"`
-	Version   string      `gorm:"not null;size:16"`
-	Topic     string      `gorm:"not null;size:256"`
-	Status    enum.Status `gorm:"not null"`
-	Headers   string      `gorm:"type:text"`
-	Payload   string      `gorm:"type:longtext"`
-	Retries   int         `gorm:"default:0"`
-	ExpiredAt sql.Null[time.Time]
-}
-
 //go:generate go tool shoot map -path=../../entity -to=Envelope,Envelope -type=Published,Received
 
 type Published struct {
-	Model
+	ID        uint
+	CreatedAt time.Time
+	Version   string
+	Topic     string
+	Status    enum.Status
+	Headers   string
+	Payload   string
+	Retries   int
+	ExpiredAt sql.Null[time.Time]
 }
 
 func (p *Published) writeEntity(e *entity.Envelope) {
@@ -55,8 +51,16 @@ func (p *Published) readEntity(e *entity.Envelope) {
 }
 
 type Received struct {
-	Model
-	Group string `gorm:"not null;size:128"`
+	ID        uint
+	CreatedAt time.Time
+	Version   string
+	Topic     string
+	Status    enum.Status
+	Headers   string
+	Payload   string
+	Retries   int
+	ExpiredAt sql.Null[time.Time]
+	Group     string
 }
 
 func (r *Received) writeEntity(e *entity.Envelope) {

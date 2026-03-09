@@ -8,16 +8,17 @@ import (
 	"sync"
 
 	"github.com/bwmarrin/snowflake"
+	"github.com/lopolopen/gap/internal/errx"
 )
 
-var snowNode *snowflake.Node
+var sfNode *snowflake.Node
 var initOnce sync.Once
 
 func MustInitSnowflake(node int64) {
 	initOnce.Do(func() {
 		slog.Debug(fmt.Sprintf("snowflake picks node %d", node))
 		var err error
-		snowNode, err = snowflake.NewNode(node)
+		sfNode, err = snowflake.NewNode(node)
 		if err != nil {
 			panic(err)
 		}
@@ -37,7 +38,7 @@ type Envelope struct {
 }
 
 func NewEnvelope(version string, topic string, msg any) *Envelope {
-	id := snowNode.Generate().Int64()
+	id := sfNode.Generate().Int64()
 	return &Envelope{
 		ID:      uint(id),
 		Version: version,
@@ -92,4 +93,11 @@ func (e *Envelope) HeadersBytes() ([]byte, error) {
 
 func (e *Envelope) IDString() string {
 	return strconv.FormatInt(int64(e.ID), 10)
+}
+
+func (e *Envelope) Verify() error {
+	if e.Topic == "" {
+		return errx.ErrEmptyTopic
+	}
+	return nil
 }

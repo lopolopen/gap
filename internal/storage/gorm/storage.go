@@ -3,9 +3,7 @@ package gorm
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
-	"time"
 
 	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/entity"
@@ -36,84 +34,27 @@ func (s *Storage) CreatePublished(ctx context.Context, envelop *entity.Envelope)
 	if envelop == nil {
 		return errx.ErrParamIsNil("envelop")
 	}
-	if envelop.Topic == "" {
-		return errx.ErrEmptyTopic
-	}
-	payload, err := envelop.PayloadBytes()
-	if err != nil {
-		return err
-	}
-	if len(payload) == 0 {
-		return errx.ErrNilPayload
-	}
 
-	headers, err := envelop.HeadersBytes()
-	if err != nil {
-		return err
-	}
-
-	pub := &Published{
-		Model: Model{
-			ID:        envelop.ID,
-			CreatedAt: time.Now(),
-			Version:   s.gapOpts.Version,
-			Topic:     envelop.Topic,
-			Status:    enum.StatusPending,
-			Payload:   string(payload),
-			Headers:   string(headers),
-		},
-	}
 	if _, ok := s.db.Statement.ConnPool.(gorm.TxCommitter); !ok {
 		slog.Warn("publishing does not work in transaction")
 	}
-	err = s.db.Create(pub).Error
-	if err != nil {
-		return err
-	}
-	envelop.ID = pub.ID
-	return nil
+
+	pub := new(Published).FromEntity(envelop)
+	err := s.db.Create(pub).Error
+	return err
 }
 
 func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) error {
 	if envelop == nil {
 		return errx.ErrParamIsNil("envelop")
 	}
-	if envelop.Topic == "" {
-		return errx.ErrEmptyTopic
-	}
-	headers, err := envelop.HeadersBytes()
-	if err != nil {
-		return err
-	}
-	payload, err := envelop.PayloadBytes()
-	if err != nil {
-		return err
-	}
-	if len(payload) == 0 {
-		return errx.ErrNilPayload
-	}
 
-	rec := &Received{
-		Model: Model{
-			ID:        envelop.ID,
-			CreatedAt: time.Now(),
-			Version:   envelop.Version,
-			Topic:     envelop.Topic,
-			Status:    enum.StatusPending,
-			Headers:   string(headers),
-			Payload:   string(payload),
-		},
-		Group: envelop.Group,
-	}
-	err = s.db.Create(rec).Error
-	if err != nil {
-		return err
-	}
-	envelop.ID = rec.ID
-	return nil
+	rec := new(Received).FromEntity(envelop)
+	err := s.db.Create(rec).Error
+	return err
 }
 
-func NewStorate(gapOpts *internal.Options) *Storage {
+func NewStorage(gapOpts *internal.Options) *Storage {
 	opts := gapOpts.Gorm()
 	s := &Storage{
 		gapOpts: gapOpts,
@@ -123,7 +64,8 @@ func NewStorate(gapOpts *internal.Options) *Storage {
 	s.setDB(db)
 	err := s.init()
 	if err != nil {
-		log.Fatalf("failed to init storage: %v", err)
+		slog.Error("failed to init storage", slog.Any("err", err))
+		panic(err)
 	}
 	var _ storage.Storage = s
 	return s
@@ -141,7 +83,8 @@ func makeGormDB(c *gormopt.Options) *gorm.DB {
 
 	db, err := gorm.Open(dial)
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		slog.Error("failed to connect database", slog.Any("err", err))
+		panic(err)
 	}
 	return db
 }
@@ -185,8 +128,8 @@ func (s *Storage) Bind(txer tx.Txer) (storage.Storage, error) {
 func (s *Storage) UpdateStatusPublished(ctx context.Context, id uint, status enum.Status) error {
 	return s.db.WithContext(ctx).
 		Model(&Published{}).
-		Where("id = ?", id).
-		Update("status", status).Error
+		Where("`id` = ?", id).
+		Update("`status`", status).Error
 }
 
 func migrateWithComment(db *gorm.DB, models ...any) error {
@@ -227,9 +170,9 @@ func (s *Storage) ClaimPublishedBatch(ctx context.Context, batchSize int) ([]*en
 	s.db.Transaction(func(tx *gorm.DB) error {
 		err := tx.WithContext(ctx).
 			Model(&Published{}).
-			Where("version = ?", o.Version).
-			Where("status IN ?", []enum.Status{enum.StatusPending, enum.StatusFailed}).
-			Where("retries < ?", o.MaxRetries).
+			Where("`version` = ?", o.Version).
+			Where("`status` IN ?", []enum.Status{enum.StatusPending, enum.StatusFailed}).
+			Where("`retries` < ?", o.MaxRetries).
 			// Where("created_at > ?", ago).
 			Limit(batchSize).
 			Clauses(clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}).
@@ -246,8 +189,8 @@ func (s *Storage) ClaimPublishedBatch(ctx context.Context, batchSize int) ([]*en
 		}
 		err = tx.WithContext(ctx).
 			Model(&Published{}).
-			Where("id IN ?", ids).
-			Update("status", enum.StatusProcessing).Error
+			Where("`id` IN ?", ids).
+			Update("`status`", enum.StatusProcessing).Error
 		if err != nil {
 			return err
 		}
@@ -267,10 +210,10 @@ func (s *Storage) ClaimReceivedBatch(ctx context.Context, batchSize int) ([]*ent
 	s.db.Transaction(func(tx *gorm.DB) error {
 		err := tx.WithContext(ctx).
 			Model(&Received{}).
-			Where("version = ?", o.Version).
+			Where("`version` = ?", o.Version).
 			Where("`group` = ?", o.Group).
-			Where("status IN ?", []enum.Status{enum.StatusPending, enum.StatusFailed}).
-			Where("retries < ?", o.MaxRetries).
+			Where("`status` IN ?", []enum.Status{enum.StatusPending, enum.StatusFailed}).
+			Where("`retries` < ?", o.MaxRetries).
 			// Where("created_at > ?", ago).
 			Limit(batchSize).
 			Clauses(clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}).
@@ -287,8 +230,8 @@ func (s *Storage) ClaimReceivedBatch(ctx context.Context, batchSize int) ([]*ent
 		}
 		err = tx.WithContext(ctx).
 			Model(&Received{}).
-			Where("id IN ?", ids).
-			Update("status", enum.StatusProcessing).Error
+			Where("`id` IN ?", ids).
+			Update("`status`", enum.StatusProcessing).Error
 		if err != nil {
 			return err
 		}
@@ -304,6 +247,6 @@ func (s *Storage) ClaimReceivedBatch(ctx context.Context, batchSize int) ([]*ent
 func (s *Storage) UpdateStatusReceived(ctx context.Context, id uint, status enum.Status) error {
 	return s.db.WithContext(ctx).
 		Model(&Received{}).
-		Where("id = ?", id).
-		Update("status", status).Error
+		Where("`id` = ?", id).
+		Update("`status`", status).Error
 }
