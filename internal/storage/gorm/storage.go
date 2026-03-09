@@ -41,11 +41,7 @@ func (s *Storage) CreatePublished(ctx context.Context, envelop *entity.Envelope)
 
 	pub := new(Published).FromEntity(envelop)
 	err := s.db.Create(pub).Error
-	if err != nil {
-		return err
-	}
-	// envelop.ID = pub.ID
-	return nil
+	return err
 }
 
 func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) error {
@@ -55,11 +51,7 @@ func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) 
 
 	rec := new(Received).FromEntity(envelop)
 	err := s.db.Create(rec).Error
-	if err != nil {
-		return err
-	}
-	// envelop.ID = rec.ID
-	return nil
+	return err
 }
 
 func NewStorage(gapOpts *internal.Options) *Storage {
