@@ -33,7 +33,8 @@ func (s *Sub) Subscribe(topic string, handler Handler[[]byte]) error {
 
 	slog.Debug(fmt.Sprintf("subscribe: topic(%s) -> group(%s)", topic, s.group))
 
-	err := s.broker.Subscribe(topic)
+	ctx := context.Background()
+	err := s.broker.Subscribe(ctx, topic)
 	if err != nil {
 		return err
 	}

@@ -42,7 +42,6 @@ func main() {
 
 	gap.Subscribe(
 		gap.WithContext(ctx),
-		gap.ServiceName("rabbitmq-gorm-mysql-example.worker"),
 		gap.UseRabbitMQ(
 			rabbitmq.URL(url),
 		),

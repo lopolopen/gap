@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
-	"examples/rabbitmq-mysql-example/sqltx"
+	"examples/kafka-mysql-example/sqltx"
 	"fmt"
 	"log/slog"
 	"os/signal"
@@ -12,21 +12,21 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lopolopen/gap"
+	"github.com/lopolopen/gap/options/kafka"
 	"github.com/lopolopen/gap/options/mysql"
-	"github.com/lopolopen/gap/options/rabbitmq"
 )
 
 func main() {
 	dsn := "root:root@tcp(127.0.0.1:3306)/example?charset=utf8mb4&parseTime=True&loc=Local"
-	url := "amqp://guest:guest@localhost:5672/example"
+	brokers := []string{"127.0.0.1:9092"}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	pub := gap.NewPublisher[time.Time](
 		gap.WithContext(ctx),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		gap.UseKafka(
+			kafka.Brokers(brokers),
 		),
 		gap.UseMySQL(
 			mysql.DSN(dsn),
@@ -35,9 +35,9 @@ func main() {
 
 	gap.Subscribe(
 		gap.WithContext(ctx),
-		gap.ServiceName("rabbitmq-mysql-example.worker"),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		gap.ServiceName("kafka-mysql-example.worker"),
+		gap.UseKafka(
+			kafka.Brokers(brokers),
 		),
 		gap.UseMySQL(
 			mysql.DSN(dsn),

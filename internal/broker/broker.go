@@ -9,7 +9,7 @@ import (
 type Broker interface {
 	Send(ctx context.Context, envelope *entity.Envelope) error
 
-	Subscribe(topic string) error
+	Subscribe(ctx context.Context, topic string) error
 
 	Receive(ctx context.Context) (<-chan *entity.Envelope, error)
 

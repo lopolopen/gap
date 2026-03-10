@@ -1,11 +1,11 @@
 # gap
 
-A lightweight, event-driven messaging library for Go. It provides outbox pattern implementation with support for RabbitMQ and GORM-based storage, and is designed to support Kafka, RocketMQ, and additional databases in the future.
+A lightweight, event-driven messaging library for Go. It provides outbox pattern implementation with support for RabbitMQ, Kafka and MySQL (or GORM-based storage), and is designed to support additional brokers and databases in the future.
 
 ## Features
 
 - **Outbox Pattern**: Reliable message publishing with database transactions
-- **Multiple Brokers**: Support for RabbitMQ (and extensible for others)
+- **Multiple Brokers**: Support for RabbitMQ, Kafka (and extensible for others)
 - **Storage Backends**: GORM integration for MySQL, PostgreSQL, etc.
 - **Code Generation**: Automatic handler generation with `gapc`
 - **Type Safety**: Generic-based API for type-safe message handling

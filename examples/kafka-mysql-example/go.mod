@@ -1,4 +1,4 @@
-module examples/rabbitmq-mysql-example
+module examples/kafka-mysql-example
 
 go 1.24.6
 

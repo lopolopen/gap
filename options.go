@@ -9,6 +9,7 @@ var (
 	WithContext = internal.Context
 
 	UseRabbitMQ = internal.UseRabbitMQ
+	UseKafka    = internal.UseKafka
 	UseGorm     = internal.UseGorm
 	UseMySQL    = internal.UseMySQL
 
