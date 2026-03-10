@@ -8,6 +8,7 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/broker"
+	"github.com/lopolopen/gap/internal/broker/kafka"
 	"github.com/lopolopen/gap/internal/broker/rabbitmq"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
@@ -47,17 +48,7 @@ func NewPublisher[T any](opts ...shoot.Option[Options, *Options]) Publisher[T] {
 
 	initSnowflake(gapOpts.WorkerID)
 
-	var stor storage.Storage
-	var brok broker.Broker
-	if gapOpts.Gorm() != nil {
-		stor = gorm.NewStorage(gapOpts)
-	}
-	if gapOpts.MySQL() != nil {
-		stor = mysql.NewStorage(gapOpts)
-	}
-	if gapOpts.RabbitMQ() != nil {
-		brok = rabbitmq.NewBroker(gapOpts)
-	}
+	stor, brok := storageAndBroker(gapOpts)
 
 	if stor != nil && brok != nil {
 		pump := internal.NewPump(gapOpts, stor, brok)
@@ -130,24 +121,13 @@ func (g *groupedSubs) subscribe(gapOpts *Options) error {
 		if g.subMap == nil {
 			g.subMap = make(map[string]*internal.Sub)
 		}
-		h, ok := g.subMap[group]
+		sub, ok := g.subMap[group]
 		if !ok {
-			var stor storage.Storage
-			var brok broker.Broker
-			if opt.Gorm() != nil {
-				stor = gorm.NewStorage(&opt)
-			}
-			if opt.MySQL() != nil {
-				stor = mysql.NewStorage(&opt)
-			}
-			if opt.RabbitMQ() != nil {
-				brok = rabbitmq.NewBroker(&opt)
-			}
-
-			h = internal.NewSub(&opt, stor, brok)
-			g.subMap[group] = h
+			stor, brok := storageAndBroker(&opt)
+			sub = internal.NewSub(&opt, stor, brok)
+			g.subMap[group] = sub
 		}
-		err := h.Subscribe(o.Topic, o.Handler)
+		err := sub.Subscribe(o.Topic, o.Handler)
 		if err != nil {
 			return err
 		}
@@ -176,4 +156,22 @@ func initSnowflake(node int64) {
 		}
 	}
 	entity.MustInitSnowflake(node)
+}
+
+func storageAndBroker(gapOpts *Options) (storage.Storage, broker.Broker) {
+	var stor storage.Storage
+	var brok broker.Broker
+	if gapOpts.Gorm() != nil {
+		stor = gorm.NewStorage(gapOpts)
+	}
+	if gapOpts.MySQL() != nil {
+		stor = mysql.NewStorage(gapOpts)
+	}
+	if gapOpts.RabbitMQ() != nil {
+		brok = rabbitmq.NewBroker(gapOpts)
+	}
+	if gapOpts.Kafka() != nil {
+		brok = kafka.NewBroker(gapOpts)
+	}
+	return stor, brok
 }

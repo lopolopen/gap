@@ -66,7 +66,7 @@ func (b *Broker) send(ctx context.Context, routingKey string, headers map[string
 	return nil
 }
 
-func (b *Broker) Subscribe(topic string) error {
+func (b *Broker) Subscribe(_ context.Context, topic string) error {
 	ch, err := b.chPool.Rent()
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func (b *Broker) Subscribe(topic string) error {
 	if err != nil {
 		return err
 	}
-
+	slog.Debug(fmt.Sprintf("binded to routing key: %s (%s)", topic, b.gapOpts.Group))
 	return nil
 }
 
@@ -159,6 +159,10 @@ func (b *Broker) Reject(tag any) error {
 
 func NewBroker(gapOpts *internal.Options) *Broker {
 	opts := gapOpts.RabbitMQ()
+	if opts == nil {
+		panic("rabbitmq options not configured")
+	}
+
 	b := &Broker{
 		gapOpts: gapOpts,
 		opts:    opts,

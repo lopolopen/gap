@@ -106,6 +106,13 @@ func UseRabbitMQ(opts ...shoot.Option[rabbitmq.Options, *rabbitmq.Options]) shoo
 	}
 }
 
+func UseKafka(opts ...shoot.Option[kafka.Options, *kafka.Options]) shoot.Option[Options, *Options] {
+	return func(o *Options) {
+		options := new(kafka.Options).With(opts...)
+		o._kafa = options
+	}
+}
+
 func UseGorm(opts ...shoot.Option[gorm.Options, *gorm.Options]) shoot.Option[Options, *Options] {
 	return func(o *Options) {
 		options := new(gorm.Options).With(opts...)

@@ -14,12 +14,12 @@ import (
 	"github.com/lopolopen/gap/internal/errx"
 	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/tx"
-	mysqlopt "github.com/lopolopen/gap/options/mysql"
+	optmysql "github.com/lopolopen/gap/options/mysql"
 )
 
 type Storage struct {
 	gapOpts *internal.Options
-	opts    *mysqlopt.Options
+	opts    *optmysql.Options
 	db      *sql.DB
 	tx      *sql.Tx
 }
