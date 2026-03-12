@@ -8,17 +8,18 @@ import (
 	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
-	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/tx"
+	"github.com/lopolopen/gap/options/gap"
+	"github.com/lopolopen/gap/storage"
 )
 
 type Pub[T any] struct {
-	opts    *Options
+	opts    *gap.Options
 	storage storage.Storage
 	broker  broker.Broker
 }
 
-func NewPub[T any](opts *Options, storage storage.Storage, broker broker.Broker) *Pub[T] {
+func NewPub[T any](opts *gap.Options, storage storage.Storage, broker broker.Broker) *Pub[T] {
 	if broker == nil {
 		panic(errx.ErrNoBroker)
 	}

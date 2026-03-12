@@ -43,7 +43,7 @@ type QueueOptions struct {
 	AutoDelete bool
 }
 
-func (o *Options) Url() string {
+func (o *Options) AmqpURL() string {
 	if o.URL != "" {
 		return o.URL
 	}

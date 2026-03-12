@@ -1,7 +1,6 @@
 package gorm
 
 import (
-	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
@@ -13,7 +12,7 @@ type Options struct {
 
 	LogLevel logger.LogLevel
 
-	DB *gorm.DB
+	GormDB any
 
 	MySQL *MySQLConf
 

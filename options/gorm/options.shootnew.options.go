@@ -4,16 +4,15 @@ package gorm
 
 import (
 	"github.com/lopolopen/shoot"
-	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 // NewOptions constructs a new instance of type Options
-func NewOptions(schema string, logLevel logger.LogLevel, db *gorm.DB, mySql *MySQLConf, postgreSql *PostgreSQLConf) *Options {
+func NewOptions(schema string, logLevel logger.LogLevel, gormDb any, mySql *MySQLConf, postgreSql *PostgreSQLConf) *Options {
 	return &Options{
 		Schema:     schema,
 		LogLevel:   logLevel,
-		DB:         db,
+		GormDB:     gormDb,
 		MySQL:      mySql,
 		PostgreSQL: postgreSql,
 	}
@@ -42,10 +41,10 @@ func LogLevel(logLevel_ logger.LogLevel) shoot.Option[Options, *Options] {
 	}
 }
 
-// DB is a configuration for the filed DB
-func DB(db_ *gorm.DB) shoot.Option[Options, *Options] {
+// GormDB is a configuration for the filed GormDB
+func GormDB(gormDB_ any) shoot.Option[Options, *Options] {
 	return func(o *Options) {
-		o.DB = db_
+		o.GormDB = gormDB_
 	}
 }
 

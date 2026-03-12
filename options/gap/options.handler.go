@@ -1,4 +1,4 @@
-package internal
+package gap
 
 import (
 	"context"
@@ -7,6 +7,8 @@ import (
 	"github.com/lopolopen/gap/internal/errx"
 	"github.com/lopolopen/shoot"
 )
+
+type Handler[T any] func(ctx context.Context, msg T, headers map[string]string) error
 
 func RegisterHandlerOnly(o *Options) bool {
 	return o._registerHandlerOnly

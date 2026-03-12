@@ -29,7 +29,7 @@ func (p *DefaultPool) connection() (*amqp.Connection, error) {
 	if p.conn != nil {
 		_ = p.conn.Close()
 	}
-	conn, err := amqp.Dial(p.opts.Url())
+	conn, err := amqp.Dial(p.opts.AmqpURL())
 	if err != nil {
 		slog.Error("failed to connect rabbitmq server", slog.Any("err", err))
 		return nil, err

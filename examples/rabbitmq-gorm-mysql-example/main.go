@@ -12,6 +12,7 @@ import (
 	"github.com/lopolopen/gap"
 	optgorm "github.com/lopolopen/gap/options/gorm"
 	"github.com/lopolopen/gap/options/rabbitmq"
+	_ "github.com/lopolopen/gap/storage/gorm"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -34,7 +35,7 @@ func main() {
 			rabbitmq.URL(url),
 		),
 		gap.UseGorm(
-			optgorm.DB(db),
+			optgorm.GormDB(db),
 		),
 	)
 

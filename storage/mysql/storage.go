@@ -8,17 +8,17 @@ import (
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"
-	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/tx"
+	"github.com/lopolopen/gap/options/gap"
 	optmysql "github.com/lopolopen/gap/options/mysql"
+	"github.com/lopolopen/gap/storage"
 )
 
 type Storage struct {
-	gapOpts *internal.Options
+	gapOpts *gap.Options
 	opts    *optmysql.Options
 	db      *sql.DB
 	tx      *sql.Tx
@@ -260,22 +260,12 @@ func (s *Storage) UpdateStatusReceived(ctx context.Context, id uint, status enum
 	return nil
 }
 
-func NewStorage(gapOpts *internal.Options) *Storage {
+func NewStorage(gapOpts *gap.Options, db *sql.DB) *Storage {
 	opts := gapOpts.MySQL()
-	db, err := sql.Open("mysql", opts.DSN)
-	if err != nil {
-		slog.Error("failed to connect mysql database", slog.Any("err", err))
-		panic(err)
-	}
 	s := &Storage{
 		gapOpts: gapOpts,
 		opts:    opts,
 		db:      db,
-	}
-	err = s.init()
-	if err != nil {
-		slog.Error("failed to init storage", slog.Any("err", err))
-		panic(err)
 	}
 	var _ storage.Storage = s
 	return s

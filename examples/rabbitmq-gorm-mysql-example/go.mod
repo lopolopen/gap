@@ -4,7 +4,8 @@ go 1.24.6
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/lopolopen/gap v0.0.0
+	github.com/lopolopen/gap v0.0.1-alpha.5
+	github.com/lopolopen/gap/storage/gorm v0.0.0
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.1
 )
@@ -25,3 +26,5 @@ require (
 )
 
 replace github.com/lopolopen/gap => ../../../gap
+
+replace github.com/lopolopen/gap/storage/gorm => ../../../gap/storage/gorm

@@ -1,18 +1,18 @@
 package gapc
 
 import (
-	"github.com/lopolopen/gap/internal"
+	"github.com/lopolopen/gap/options/gap"
 	"github.com/lopolopen/shoot"
 )
 
 var (
-	GoGenerated               = internal.GoGenerated
-	HandleTopicWithinGroupRaw = internal.HandleTopicWithinGroupRaw
-	FileName                  = internal.FileName
-	FuncName                  = internal.FuncName
-	Resolve                   = internal.Resolve
+	GoGenerated               = gap.GoGenerated
+	HandleTopicWithinGroupRaw = gap.HandleTopicWithinGroupRaw
+	FileName                  = gap.FileName
+	FuncName                  = gap.FuncName
+	Resolve                   = gap.Resolve
 )
 
-func ResolveType[T any](typeName string, resolve func(v T)) shoot.Option[internal.DIOptions, *internal.DIOptions] {
-	return internal.ResolveType(typeName, resolve)
+func ResolveType[T any](typeName string, resolve func(v T)) shoot.Option[gap.DIOptions, *gap.DIOptions] {
+	return gap.ResolveType(typeName, resolve)
 }

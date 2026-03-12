@@ -9,22 +9,21 @@ import (
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"
-	"github.com/lopolopen/gap/internal/storage"
+	"github.com/lopolopen/gap/options/gap"
+	"github.com/lopolopen/gap/storage"
 )
 
-type Handler[T any] func(ctx context.Context, msg T, headers map[string]string) error
-
 type Sub struct {
-	opts     *Options
+	opts     *gap.Options
 	group    string
 	storage  storage.Storage
 	broker   broker.Broker
-	handlers map[string]Handler[[]byte]
+	handlers map[string]gap.Handler[[]byte]
 	pump     *Pump
 }
 
 // Subscribe implements [Subscriber].
-func (s *Sub) Subscribe(topic string, handler Handler[[]byte]) error {
+func (s *Sub) Subscribe(topic string, handler gap.Handler[[]byte]) error {
 	_, ok := s.handlers[topic]
 	if ok {
 		return errx.ErrMultiHandlers(topic, s.group)
@@ -42,7 +41,7 @@ func (s *Sub) Subscribe(topic string, handler Handler[[]byte]) error {
 	return nil
 }
 
-func NewSub(opts *Options, storage storage.Storage, broker broker.Broker) *Sub {
+func NewSub(opts *gap.Options, storage storage.Storage, broker broker.Broker) *Sub {
 	if broker == nil {
 		panic(errx.ErrNoBroker)
 	}
@@ -52,7 +51,7 @@ func NewSub(opts *Options, storage storage.Storage, broker broker.Broker) *Sub {
 		group:    opts.Group,
 		storage:  storage,
 		broker:   broker,
-		handlers: make(map[string]Handler[[]byte]),
+		handlers: make(map[string]gap.Handler[[]byte]),
 	}
 	if storage != nil {
 		sub.pump = NewPump(opts, storage, broker)

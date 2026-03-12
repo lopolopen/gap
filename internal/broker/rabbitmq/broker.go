@@ -7,16 +7,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
+	"github.com/lopolopen/gap/options/gap"
 	"github.com/lopolopen/gap/options/rabbitmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type Broker struct {
-	gapOpts *internal.Options
+	gapOpts *gap.Options
 	opts    *rabbitmq.Options
 	chPool  ChanPool
 	x       string
@@ -157,7 +157,7 @@ func (b *Broker) Reject(tag any) error {
 	return deli.Nack(false, true)
 }
 
-func NewBroker(gapOpts *internal.Options) *Broker {
+func NewBroker(gapOpts *gap.Options) *Broker {
 	opts := gapOpts.RabbitMQ()
 	if opts == nil {
 		panic("rabbitmq options not configured")

@@ -7,18 +7,18 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/lopolopen/gap/internal"
+	"github.com/lopolopen/gap/options/gap"
 	optkfk "github.com/lopolopen/gap/options/kafka"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/plain"
 )
 
 type ConnFactory struct {
-	gapOpts *internal.Options
+	gapOpts *gap.Options
 	opts    *optkfk.Options
 }
 
-func NewConnFactory(gapOpts *internal.Options, opts *optkfk.Options) *ConnFactory {
+func NewConnFactory(gapOpts *gap.Options, opts *optkfk.Options) *ConnFactory {
 	return &ConnFactory{
 		gapOpts: gapOpts,
 		opts:    opts,

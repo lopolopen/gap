@@ -14,6 +14,7 @@ import (
 	"github.com/lopolopen/gap"
 	"github.com/lopolopen/gap/options/mysql"
 	"github.com/lopolopen/gap/options/rabbitmq"
+	_ "github.com/lopolopen/gap/storage/mysql"
 )
 
 func main() {

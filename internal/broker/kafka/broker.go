@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
+	"github.com/lopolopen/gap/options/gap"
 	optkfk "github.com/lopolopen/gap/options/kafka"
 	"github.com/segmentio/kafka-go"
 )
@@ -27,7 +27,7 @@ const (
 )
 
 type Broker struct {
-	gapOpts        *internal.Options
+	gapOpts        *gap.Options
 	opts           *optkfk.Options
 	connFactory    *ConnFactory
 	writer         *kafka.Writer
@@ -282,7 +282,7 @@ func (b *Broker) waitTopicReady(ctx context.Context, topic string) error {
 }
 
 // NewBroker creates a new Kafka broker instance.
-func NewBroker(gapOpts *internal.Options) *Broker {
+func NewBroker(gapOpts *gap.Options) *Broker {
 	opts := gapOpts.Kafka()
 	if opts == nil {
 		panic("kafka options not configured")

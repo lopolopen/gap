@@ -11,7 +11,8 @@ import (
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"
-	"github.com/lopolopen/gap/internal/storage"
+	"github.com/lopolopen/gap/options/gap"
+	"github.com/lopolopen/gap/storage"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -19,12 +20,12 @@ var stopHandlingOnce sync.Once
 var stopSendingOnce sync.Once
 
 type Pump struct {
-	gapOpts *Options
+	gapOpts *gap.Options
 	storage storage.Storage
 	broker  broker.Broker
 }
 
-func NewPump(gapOpts *Options, storage storage.Storage, broker broker.Broker) *Pump {
+func NewPump(gapOpts *gap.Options, storage storage.Storage, broker broker.Broker) *Pump {
 	if storage == nil {
 		panic(errx.ErrNoStorage)
 	}

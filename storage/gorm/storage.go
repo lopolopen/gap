@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/lopolopen/gap/internal"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"
-	"github.com/lopolopen/gap/internal/storage"
 	"github.com/lopolopen/gap/internal/tx"
+	"github.com/lopolopen/gap/options/gap"
 	gormopt "github.com/lopolopen/gap/options/gorm"
-	"gorm.io/driver/mysql"
+	"github.com/lopolopen/gap/storage"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
@@ -24,7 +23,7 @@ type TableCommentter interface {
 }
 
 type Storage struct {
-	gapOpts *internal.Options
+	gapOpts *gap.Options
 	opts    *gormopt.Options
 	db      *gorm.DB
 }
@@ -54,39 +53,15 @@ func (s *Storage) CreateReceived(ctx context.Context, envelop *entity.Envelope) 
 	return err
 }
 
-func NewStorage(gapOpts *internal.Options) *Storage {
-	opts := gapOpts.Gorm()
+func NewStorage(gapOpts *gap.Options, db *gorm.DB) *Storage {
 	s := &Storage{
 		gapOpts: gapOpts,
-		opts:    opts,
+		opts:    gapOpts.Gorm(),
 	}
-	db := makeGormDB(opts)
 	s.setDB(db)
-	err := s.init()
-	if err != nil {
-		slog.Error("failed to init storage", slog.Any("err", err))
-		panic(err)
-	}
+
 	var _ storage.Storage = s
 	return s
-}
-
-func makeGormDB(c *gormopt.Options) *gorm.DB {
-	if c.DB != nil {
-		db := *c.DB
-		return &db
-	}
-	var dial gorm.Dialector
-	if c.MySQL != nil {
-		dial = mysql.Open(c.MySQL.DSN)
-	}
-
-	db, err := gorm.Open(dial)
-	if err != nil {
-		slog.Error("failed to connect database", slog.Any("err", err))
-		panic(err)
-	}
-	return db
 }
 
 func (s *Storage) setDB(db *gorm.DB) {
@@ -117,12 +92,12 @@ func (s *Storage) Bind(txer tx.Txer) (storage.Storage, error) {
 	if !ok {
 		return nil, errx.ErrInvalidGormTx
 	}
-	newS := Storage{
+	newStor := Storage{
 		gapOpts: s.gapOpts,
 		opts:    s.opts,
 	}
-	newS.setDB(db)
-	return &newS, nil
+	newStor.setDB(db)
+	return &newStor, nil
 }
 
 func (s *Storage) UpdateStatusPublished(ctx context.Context, id uint, status enum.Status) error {
