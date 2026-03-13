@@ -3,7 +3,7 @@ module github.com/lopolopen/gap/broker/xkafka
 go 1.24.6
 
 require (
-	github.com/lopolopen/gap v0.0.1-alpha.5
+	github.com/lopolopen/gap v0.0.2-alpha.1
 	github.com/lopolopen/shoot v0.7.1
 	github.com/segmentio/kafka-go v0.4.50
 )
