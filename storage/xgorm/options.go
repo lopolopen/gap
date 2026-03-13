@@ -4,6 +4,8 @@ import (
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/options/gap"
 	"github.com/lopolopen/shoot"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 //go:generate go tool shoot new -opt -short -type=Options
@@ -12,9 +14,9 @@ type Options struct {
 	//shoot: def="gap"
 	Schema string
 
-	LogLevel int
+	LogLevel logger.LogLevel
 
-	GormDB any
+	DB *gorm.DB
 
 	MySQL *MySQLConf
 

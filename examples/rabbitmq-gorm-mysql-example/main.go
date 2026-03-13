@@ -34,7 +34,7 @@ func main() {
 			xrabbitmq.URL(url),
 		),
 		xgorm.UseGorm(
-			xgorm.GormDB(db),
+			xgorm.DB(db),
 		),
 	)
 

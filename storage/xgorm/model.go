@@ -23,7 +23,7 @@ type Model struct {
 	ExpiredAt sql.Null[time.Time]
 }
 
-//go:generate go tool shoot map -path=../../entity -to=Envelope,Envelope -type=Published,Received
+//go:generate go tool shoot map -path=../../internal/entity -to=Envelope,Envelope -type=Published,Received
 
 type Published struct {
 	Model

@@ -38,12 +38,8 @@ func (f *factory) CreateStorage(gapOpts *gap.Options) (storage.Storage, error) {
 }
 
 func makeDB(opts *Options) (*gorm.DB, error) {
-	if opts.GormDB != nil {
-		gormDB, ok := opts.GormDB.(*gorm.DB)
-		if !ok {
-			return nil, errors.New("option GormDB must be *gorm.DB instance")
-		}
-		db := *gormDB
+	if opts.DB != nil {
+		db := *opts.DB
 		return &db, nil
 	}
 	var dial gorm.Dialector
