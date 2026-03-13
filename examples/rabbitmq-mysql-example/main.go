@@ -12,8 +12,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lopolopen/gap"
-	"github.com/lopolopen/gap/options/mysql"
-	"github.com/lopolopen/gap/options/rabbitmq"
+	"github.com/lopolopen/gap/broker/xrabbitmq"
+	"github.com/lopolopen/gap/storage/xmysql"
 )
 
 func main() {
@@ -25,22 +25,22 @@ func main() {
 
 	pub := gap.NewPublisher[time.Time](
 		gap.WithContext(ctx),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		xrabbitmq.UseRabbitMQ(
+			xrabbitmq.URL(url),
 		),
-		gap.UseMySQL(
-			mysql.DSN(dsn),
+		xmysql.UseMySQL(
+			xmysql.DSN(dsn),
 		),
 	)
 
 	gap.Subscribe(
 		gap.WithContext(ctx),
 		gap.ServiceName("rabbitmq-mysql-example.worker"),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		xrabbitmq.UseRabbitMQ(
+			xrabbitmq.URL(url),
 		),
-		gap.UseMySQL(
-			mysql.DSN(dsn),
+		xmysql.UseMySQL(
+			xmysql.DSN(dsn),
 		),
 	)
 

@@ -1,34 +1,25 @@
 package gap
 
 import (
-	"github.com/lopolopen/gap/internal"
+	"github.com/lopolopen/gap/options/gap"
 	"github.com/lopolopen/shoot"
 )
 
 var (
-	WithContext = internal.Context
+	WithContext  = gap.Context
+	UseDashboard = gap.UseDashboard
+	Version      = gap.Version
+	ServiceName  = gap.ServiceName
+	DefaultGroup = gap.DefaultGroup
+	WorkerID     = gap.WorkerID
 
-	UseRabbitMQ = internal.UseRabbitMQ
-	UseKafka    = internal.UseKafka
-	UseGorm     = internal.UseGorm
-	UseMySQL    = internal.UseMySQL
-
-	Version      = internal.Version
-	ServiceName  = internal.ServiceName
-	DefaultGroup = internal.DefaultGroup
-	WorkerID     = internal.WorkerID
-
-	Inject = internal.Inject
+	Inject = gap.Inject
 )
 
-// func EnableInbox() shoot.Option[Options, *Options] {
-// 	return internal.EnableInbox(true)
-// }
-
-func HandleTopic[T any](handler Handler[T], topic string) shoot.Option[Options, *Options] {
-	return internal.HandleTopicWithinGroup(handler, topic, "")
+func HandleTopic[T any](handler gap.Handler[T], topic string) shoot.Option[Options, *Options] {
+	return gap.HandleTopicWithinGroup(handler, topic, "")
 }
 
-func HandleTopicWithinGroup[T any](group, topic string, handler Handler[T]) shoot.Option[Options, *Options] {
-	return internal.HandleTopicWithinGroup(handler, topic, group)
+func HandleTopicWithinGroup[T any](group, topic string, handler gap.Handler[T]) shoot.Option[Options, *Options] {
+	return gap.HandleTopicWithinGroup(handler, topic, group)
 }

@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/lopolopen/gap"
-	optgorm "github.com/lopolopen/gap/options/gorm"
-	"github.com/lopolopen/gap/options/rabbitmq"
+	"github.com/lopolopen/gap/broker/xrabbitmq"
+	"github.com/lopolopen/gap/storage/xgorm"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -30,11 +30,11 @@ func main() {
 
 	pub := gap.NewEventPublisher(
 		gap.WithContext(ctx),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		xrabbitmq.UseRabbitMQ(
+			xrabbitmq.URL(url),
 		),
-		gap.UseGorm(
-			optgorm.DB(db),
+		xgorm.UseGorm(
+			xgorm.GormDB(db),
 		),
 	)
 
@@ -42,11 +42,11 @@ func main() {
 
 	gap.Subscribe(
 		gap.WithContext(ctx),
-		gap.UseRabbitMQ(
-			rabbitmq.URL(url),
+		xrabbitmq.UseRabbitMQ(
+			xrabbitmq.URL(url),
 		),
-		gap.UseGorm(
-			optgorm.MySQL(&optgorm.MySQLConf{
+		xgorm.UseGorm(
+			xgorm.MySQL(&xgorm.MySQLConf{
 				DSN: dsn,
 			}),
 		),
