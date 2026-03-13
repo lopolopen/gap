@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lopolopen/gap/internal/broker"
+	"github.com/lopolopen/gap/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"

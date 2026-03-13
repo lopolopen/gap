@@ -13,6 +13,6 @@ var (
 	Resolve                   = gap.Resolve
 )
 
-func ResolveType[T any](typeName string, resolve func(v T)) shoot.Option[gap.DIOptions, *gap.DIOptions] {
+func ResolveType[T any](typeName string, resolve func(v T)) shoot.Option[gap.HandlerDepsOptions, *gap.HandlerDepsOptions] {
 	return gap.ResolveType(typeName, resolve)
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/lopolopen/gap/internal/broker"
+	"github.com/lopolopen/gap/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/enum"
 	"github.com/lopolopen/gap/internal/errx"
@@ -41,7 +41,7 @@ func (s *Sub) Subscribe(topic string, handler gap.Handler[[]byte]) error {
 	return nil
 }
 
-func NewSub(opts *gap.Options, storage storage.Storage, broker broker.Broker) *Sub {
+func NewSub(opts *gap.Options, broker broker.Broker, storage storage.Storage) *Sub {
 	if broker == nil {
 		panic(errx.ErrNoBroker)
 	}

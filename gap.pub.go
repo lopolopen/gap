@@ -7,10 +7,7 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/lopolopen/gap/internal"
-	"github.com/lopolopen/gap/internal/broker"
 	"github.com/lopolopen/gap/internal/entity"
-	"github.com/lopolopen/gap/storage"
-
 	"github.com/lopolopen/gap/internal/workerid"
 	"github.com/lopolopen/shoot"
 )
@@ -18,10 +15,14 @@ import (
 func NewPublisher[T any](opts ...shoot.Option[Options, *Options]) Publisher[T] {
 	gapOpts := new(Options).With(opts...)
 
-	stor := internal.MustGet[storage.Storage](gapOpts.StorageExt())
-	// brok := internal.MustGet[]()
-	var brok broker.Broker
-	if stor != nil && brok != nil {
+	brok := mustGetBroker(gapOpts)
+	if brok == nil {
+		panic("broker must not be nil")
+	}
+	stor := mustGetStorage(gapOpts)
+
+	//only publisher with storage can have a pump
+	if stor != nil {
 		pump := internal.NewPump(gapOpts, stor, brok)
 		pump.PollingSend()
 	}
@@ -29,7 +30,7 @@ func NewPublisher[T any](opts ...shoot.Option[Options, *Options]) Publisher[T] {
 	initSnowflake(gapOpts.WorkerID)
 	initDashboard(gapOpts)
 
-	pub := internal.NewPub[T](gapOpts, stor, brok)
+	pub := internal.NewPub[T](gapOpts, brok, stor)
 	return pub
 }
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/lopolopen/gap/internal/broker"
+	"github.com/lopolopen/gap/broker"
 	"github.com/lopolopen/gap/internal/entity"
 	"github.com/lopolopen/gap/internal/errx"
 	"github.com/lopolopen/gap/internal/tx"
@@ -19,7 +19,7 @@ type Pub[T any] struct {
 	broker  broker.Broker
 }
 
-func NewPub[T any](opts *gap.Options, storage storage.Storage, broker broker.Broker) *Pub[T] {
+func NewPub[T any](opts *gap.Options, broker broker.Broker, storage storage.Storage) *Pub[T] {
 	if broker == nil {
 		panic(errx.ErrNoBroker)
 	}

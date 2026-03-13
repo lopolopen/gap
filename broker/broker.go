@@ -1,0 +1,24 @@
+package broker
+
+import (
+	"context"
+
+	"github.com/lopolopen/gap/internal/entity"
+	"github.com/lopolopen/gap/options/gap"
+)
+
+type Broker interface {
+	Send(ctx context.Context, envelope *entity.Envelope) error
+
+	Subscribe(ctx context.Context, topic string) error
+
+	Receive(ctx context.Context) (<-chan *entity.Envelope, error)
+
+	Commit(tag any) error
+
+	Reject(tag any) error
+}
+
+type Factory interface {
+	CreateBroker(opt *gap.Options) (Broker, error)
+}

@@ -12,9 +12,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lopolopen/gap"
-	"github.com/lopolopen/gap/options/kafka"
-	"github.com/lopolopen/gap/options/mysql"
-	_ "github.com/lopolopen/gap/storage/mysql"
+	"github.com/lopolopen/gap/broker/xkafka"
+	"github.com/lopolopen/gap/storage/xmysql"
 )
 
 func main() {
@@ -26,22 +25,22 @@ func main() {
 
 	pub := gap.NewPublisher[time.Time](
 		gap.WithContext(ctx),
-		gap.UseKafka(
-			kafka.Brokers(brokers),
+		xkafka.UseKafka(
+			xkafka.Brokers(brokers),
 		),
-		gap.UseMySQL(
-			mysql.DSN(dsn),
+		xmysql.UseMySQL(
+			xmysql.DSN(dsn),
 		),
 	)
 
 	gap.Subscribe(
 		gap.WithContext(ctx),
 		gap.ServiceName("kafka-mysql-example.worker"),
-		gap.UseKafka(
-			kafka.Brokers(brokers),
+		xkafka.UseKafka(
+			xkafka.Brokers(brokers),
 		),
-		gap.UseMySQL(
-			mysql.DSN(dsn),
+		xmysql.UseMySQL(
+			xmysql.DSN(dsn),
 		),
 	)
 

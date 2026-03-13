@@ -22,12 +22,12 @@ const (
 	WebFramwork
 )
 
-//go:generate go tool shoot enum -json -type=ExtType
+//go:generate go tool shoot enum -json -type=PluginType
 
-type ExtType int32
+type PluginType int32
 
 const (
-	None ExtType = iota
+	None PluginType = iota
 	MySQL
 	GORM
 	RabbitMQ

@@ -2,29 +2,27 @@ package internal
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/lopolopen/gap/internal/enum"
 )
 
-var extRegistries = make(map[enum.ExtType]any)
+var extRegistries = make(map[enum.PluginType]any)
 
-func Register[T any](typ enum.ExtType, value T) {
+func Register[T any](typ enum.PluginType, value T) {
 	extRegistries[typ] = value
 }
 
-func MustGet[T any](typ enum.ExtType) T {
+func MustGet[T any](typ enum.PluginType) T {
 	var zero T
 	if typ == enum.None {
 		return zero
 	}
-	v, ok := extRegistries[typ]
-	if !ok {
-		panic(fmt.Sprintf("no value is registered with the given type: %s", typ))
-	}
+	v, _ := extRegistries[typ]
 	t, ok := v.(T)
 	if !ok {
-		var x T
-		panic(fmt.Sprintf("value registered by type %s is not type: %T", typ, x))
+		elem := reflect.TypeOf((*T)(nil)).Elem()
+		panic(fmt.Sprintf("key '%s': got %T, want %s", typ, v, elem.String()))
 	}
 	return t
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // NewOptions constructs a new instance of type Options
-func NewOptions(context context.Context, serviceName string, version string, defaultGroup string, group string, claimBatchSize int, maxRetries int, lookbackSeconds int, pumpingIntervalSeconds int, maxPublishConcurrency int32, workerId int64) *Options {
+func NewOptions(context context.Context, serviceName string, version string, defaultGroup string, group string, claimBatchSize int, maxRetries int, lookbackSeconds int, pumpingIntervalSeconds int, maxPublishConcurrency int32, workerId int64, storagePlugin PluginOptions, brokerPlugin PluginOptions) *Options {
 	return &Options{
 		Context:                context,
 		ServiceName:            serviceName,
@@ -22,6 +22,8 @@ func NewOptions(context context.Context, serviceName string, version string, def
 		PumpingIntervalSeconds: pumpingIntervalSeconds,
 		MaxPublishConcurrency:  maxPublishConcurrency,
 		WorkerID:               workerId,
+		StoragePlugin:          storagePlugin,
+		BrokerPlugin:           brokerPlugin,
 	}
 }
 
@@ -108,6 +110,20 @@ func MaxPublishConcurrency(maxPublishConcurrency_ int32) shoot.Option[Options, *
 func WorkerID(workerID_ int64) shoot.Option[Options, *Options] {
 	return func(o *Options) {
 		o.WorkerID = workerID_
+	}
+}
+
+// StoragePlugin is a configuration for the filed StoragePlugin
+func StoragePlugin(storagePlugin_ PluginOptions) shoot.Option[Options, *Options] {
+	return func(o *Options) {
+		o.StoragePlugin = storagePlugin_
+	}
+}
+
+// BrokerPlugin is a configuration for the filed BrokerPlugin
+func BrokerPlugin(brokerPlugin_ PluginOptions) shoot.Option[Options, *Options] {
+	return func(o *Options) {
+		o.BrokerPlugin = brokerPlugin_
 	}
 }
 

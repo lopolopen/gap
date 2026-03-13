@@ -6,14 +6,8 @@ import (
 )
 
 var (
-	WithContext = gap.Context
-
-	UseRabbitMQ  = gap.UseRabbitMQ
-	UseKafka     = gap.UseKafka
-	UseGorm      = gap.UseGorm
-	UseMySQL     = gap.UseMySQL
+	WithContext  = gap.Context
 	UseDashboard = gap.UseDashboard
-
 	Version      = gap.Version
 	ServiceName  = gap.ServiceName
 	DefaultGroup = gap.DefaultGroup
