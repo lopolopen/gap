@@ -8,7 +8,7 @@ import (
 	"github.com/lopolopen/gap/options/gap"
 )
 
-const version = "v0.0.2-alpha.4"
+const version = "v0.0.2-alpha.5"
 
 const (
 	KeysMessageID     = internal.KeysMessageID
