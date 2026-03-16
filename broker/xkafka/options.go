@@ -5,7 +5,7 @@ import (
 	"github.com/lopolopen/shoot"
 )
 
-const version = "v0.0.1-alpha.3"
+const version = "v0.0.1-alpha.5"
 
 //go:generate go tool shoot new -opt -short -type=Options,TopicOptions
 
