@@ -8,7 +8,7 @@ import (
 	"github.com/lopolopen/gap/internal/plugin"
 )
 
-const version = "v0.1.0-alpha.1"
+const version = "v0.1.0-beta.1"
 
 var (
 	UseKafka    = internal.UseKafka
