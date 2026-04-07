@@ -1,6 +1,6 @@
 module github.com/lopolopen/gap/storage/xgorm
 
-go 1.24.6
+go 1.25.0
 
 require (
 	github.com/lopolopen/gap v0.0.2-alpha.1
@@ -10,13 +10,11 @@ require (
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
+	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
-	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
 )
-
-// replace github.com/lopolopen/gap => ../../../gap
