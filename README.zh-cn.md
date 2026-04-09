@@ -1,29 +1,29 @@
 # gap
 
-[![Language](https://img.shields.io/badge/language-中文-blue.svg)](https://github.com/lopolopen/gap/blob/main/README.zh-cn.md)
+[![Language](https://img.shields.io/badge/language-英文-blue.svg)](https://github.com/lopolopen/gap/blob/main/README.md)
 
-A lightweight, event-driven messaging library for Go. It provides outbox pattern implementation with support for RabbitMQ, Kafka and MySQL (or GORM-based storage), and is designed to support additional brokers and databases in the future.
+一个轻量、事件驱动的 Go 消息库。它实现了 Outbox 模式，并支持 RabbitMQ、Kafka 和 MySQL（或基于 GORM 的存储），同时设计上可扩展以支持更多的 broker 和数据库。
 
-## Features
+## 功能
 
-- **Outbox Pattern**: Reliable message publishing with database transactions
-- **Multiple Brokers**: Support for RabbitMQ, Kafka (and extensible for others)
-- **Storage Backends**: GORM integration for MySQL, PostgreSQL, etc.
-- **Code Generation**: Automatic handler generation with `gapc`
-- **Type Safety**: Generic-based API for type-safe message handling
-- **Dependency Injection**: Built-in DI container for handlers
+- **Outbox Pattern**：通过数据库事务保证可靠的消息发布
+- **Multiple Brokers**：支持 RabbitMQ、Kafka，且可扩展到其他 broker
+- **Storage Backends**：与 GORM 集成，支持 MySQL、PostgreSQL 等
+- **Code Generation**：使用 `gapc` 自动生成处理器代码
+- **Type Safety**：基于泛型的 API 提供类型安全的消息处理
+- **Dependency Injection**：内置处理器依赖注入容器
 
-## Installation
+## 安装
 
 ```bash
 go get github.com/lopolopen/gap
 ```
 
-## Quick Start
+## 快速开始
 
-Here's a complete example using RabbitMQ and MySQL with GORM:
+下面是一个使用 RabbitMQ 和 MySQL（GORM）的完整示例：
 
-### 1. Define Events
+### 1. 定义事件
 
 ```go
 package event
@@ -45,7 +45,7 @@ func (e OrderCreated) Topic() string {
 }
 ```
 
-### 2. Set up Publisher and Subscriber
+### 2. 设置发布者和订阅者
 
 ```go
 package main
@@ -124,64 +124,64 @@ func handle(/*dependency-list*/) gap.Handler[*event.OrderCreated] {
 }
 ```
 
-### 3. Generate Handlers
+### 3. 生成处理器
 
-Run the code generation:
+运行代码生成：
 
 ```bash
 go generate ./...
 ```
 
-This will generate the necessary handler code automatically.
+这将自动生成所需的处理器代码。
 
-### 4. Graceful Shutdown
+### 4. 优雅关机
 
-The library supports graceful shutdown through context cancellation and the built-in drain helper.
+该库通过上下文取消和内置的 drain 辅助函数支持优雅关机。
 
-- `gap.WaitDrain(ctx context.Context)`  gives the publisher/subscriber time to finish in-flight messages before exiting
+- `gap.WaitDrain(ctx context.Context)`  在退出前为发布者/订阅者留出处理未完成消息的时间
 
-## Usage Examples
+## 使用示例
 
-For a complete working example, see [`./examples/rabbitmq-gorm-mysql-example`](./examples/rabbitmq-gorm-mysql-example).
+完整可运行示例请参见 [`./examples/rabbitmq-gorm-mysql-example`](./examples/rabbitmq-gorm-mysql-example)。
 
-To run the example:
+运行示例：
 
-1. Start MySQL and RabbitMQ services
-2. Create a database named `example`
-3. Run the example:
+1. 启动 MySQL 和 RabbitMQ 服务
+2. 创建名为 `example` 的数据库
+3. 运行示例：
 
 ```bash
 cd examples/rabbitmq-gorm-mysql-example
 go run .
 ```
 
-## API Reference
+## API 参考
 
-### Publishers
+### 发布者
 
-- `gap.NewPublisher[T](opts...) Publisher[T]`: Create a typed publisher
-- `gap.NewEventPublisher(opts...) EventPublisher`: Create an event publisher
-- `publisher.Bind(tx Txer) Publisher[T]`: Bind publisher to a transaction for outbox pattern
+- `gap.NewPublisher[T](opts...) Publisher[T]`：创建一个类型化发布者
+- `gap.NewEventPublisher(opts...) EventPublisher`：创建事件发布者
+- `publisher.Bind(tx Txer) Publisher[T]`：将发布者绑定到事务以实现 Outbox 模式
 
-### Subscribers
+### 订阅者
 
-- `gap.Subscribe(opts...)`: Set up subscribers with handlers
+- `gap.Subscribe(opts...)`: 设置带处理器的订阅者
 
-### Options
+### 选项
 
-- `gap.WithDrain(ctx context.Context, timeoutSeconds int)`: Enable drain mode for graceful shutdown
-- `gap.ServiceName(name string)`: Set service name
-- `gap.Inject(deps...)`: Inject dependencies into handlers
+- `gap.WithDrain(ctx context.Context, timeoutSeconds int)`: 启用优雅关机的 drain 模式
+- `gap.ServiceName(name string)`: 设置服务名称
+- `gap.Inject(deps...)`: 向处理器注入依赖项
 
-## Code Generation
+## 代码生成
 
-Use the `gapc` tool to generate handler boilerplate:
+使用 `gapc` 工具生成处理器模板：
 
 ```bash
 go run github.com/lopolopen/gap/cmd/gapc -file=main.go
 ```
 
-Add annotations to your handler functions: (topic;group)
+向处理器函数添加注解：（topic;group）
 
 ```go
 // @subscribe: topic="my.topic"
@@ -190,7 +190,7 @@ func MyHandler(/*dependency-list*/) gap.Handler[MyMessage] {
 }
 ```
 
-If `MyMessage` implements the `gap.Event` interface, the topic can be omitted:
+如果 `MyMessage` 实现了 `gap.Event` 接口，则 topic 可以省略：
 
 ```go
 // @subscribe
@@ -199,7 +199,7 @@ func MyHandler(/*dependency-list*/) gap.Handler[MyEvent] {
 }
 ```
 
-Or use receiver as a dependency:
+也可以使用接收者作为依赖项：
 
 ```go
 // @subscribe: topic="my.topic"
@@ -208,14 +208,14 @@ func (svc *MySvc) MyHandler(/*other-dependencies*/) gap.Handler[MyMessage] {
 }
 ```
 
-## Contributing
+## 贡献
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+欢迎贡献！请随时提交 issue 和 pull request。
 
-## License
+## 许可协议
 
-See [LICENSE](./LICENSE) file for details.
+详情请参阅 [LICENSE](./LICENSE) 文件。
 
-# Inspiring projects
+# 启发项目
 
 * [CAP](https://github.com/dotnetcore/CAP)
