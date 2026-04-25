@@ -11,15 +11,15 @@ import (
 const version = "v0.1.0-beta.1"
 
 var (
-	UseRabbitMQ   = internal.UseRabbitMQ
-	Password      = internal.Password
-	UserName      = internal.UserName
-	VirtualHost   = internal.VirtualHost
-	Exchange      = internal.Exchange
-	Endpoint      = internal.Endpoint
-	URL           = internal.URL
-	ConfirmMode   = internal.ConfirmMode
-	PrefetchCount = internal.PrefetchCount
+	UseRabbitMQ       = internal.UseRabbitMQ
+	Password          = internal.Password
+	UserName          = internal.UserName
+	VirtualHost       = internal.VirtualHost
+	Exchange          = internal.Exchange
+	Endpoint          = internal.Endpoint
+	URL               = internal.URL
+	PublisherConfirms = internal.PublisherConfirms
+	PrefetchCount     = internal.PrefetchCount
 )
 
 var (
