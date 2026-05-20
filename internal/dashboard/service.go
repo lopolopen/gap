@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"path"
 	"strings"
 	"text/template"
 
@@ -62,7 +63,7 @@ func (s *BoardSvc) HandleSPA() http.Handler {
 			w.Header().Set(ContentType, ContentTypeHTML)
 			err = indexTmpl.Execute(w, map[string]any{
 				"Base":    s.opts.NormalPrefix() + "/",
-				"APIBase": s.opts.NormalAPIPrefix(),
+				"APIBase": path.Join(s.opts.LocationPath, s.opts.NormalPrefix(), "/api"),
 			})
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
