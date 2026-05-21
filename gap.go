@@ -10,7 +10,7 @@ import (
 	"github.com/lopolopen/shoot"
 )
 
-const version = "v0.1.2-beta.1"
+const version = "v0.1.2-beta.2"
 
 const (
 	KeysMessageID     = internal.KeysMessageID
